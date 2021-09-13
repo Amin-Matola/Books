@@ -14,16 +14,22 @@ import mimetypes
 from urllib import request as req
 import requests as rt
 from datetime import datetime
-#----------------------------------------------------------------
-#.........................Adding Views...........................
-#----------------------------------------------------------------
+
+"""
+............... Adding Views ...................
+
+"""
+
 def handler404(request):
+    """ If pge can't be found, or internal error occurs """
     return render(request,"404.html",{'url':request.path})
 
 def about(request):
+    """ Return the side description/about information """
     return render(request,'data/about.html',{})
 
 def contact(request):
+    """ Contact form """
     if request.method == 'GET':
         return render(request,"data/contact.html",{})
 
