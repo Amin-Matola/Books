@@ -34,8 +34,8 @@ def contact(request):
     if not sender.__contains__("@") or not len(message.strip()):
          return render(request,"data/contact.html",{"error":True})
 
-    rq=rt.post('https://script.google.com/macros/s/AKfycbzjJIf2niIw0BBt-uZUgeSkdUcOVKWvxLCprBA_iZsMUItwkeg/exec',
-    data={'email':sender,'message':message,'phone':phone})
+    rq          = rt.post('https://script.google.com/macros/s/AKfycbzjJIf2niIw0BBt-uZUgeSkdUcOVKWvxLCprBA_iZsMUItwkeg/exec',
+    data        = {'email':sender,'message':message,'phone':phone})
     if rq.status_code == 200:
         return render(request,"data/contact.html",{'success':True})
     return render(request,"data/contact.html",{})
@@ -43,7 +43,6 @@ def contact(request):
 #-------------------------
 # Applications
 #-------------------------------
-
 def application(request):
     if request.method=='GET':
         return render(request,'data/application.html',{})
@@ -58,22 +57,25 @@ def application(request):
         return render(request,'data/application.html', {'success':True})
     return render(request, 'data/application.html', {})
 
-#-------------------The usage conditions---------------------------
+#---------------------------
+# The usage conditions
+#---------------------------
 def conditions(request):
-    #return HttpResponse(settings.STATIC
+    """ Return terms and conditions of this site """
     return render(request,'data/conditions.html',{})
 
 
 
-def logn(r):
-    email           = r.POST.get('email','')
-    password        = r.POST.get('password','')
+def logn(req):
+    """ Login and authenticate users """
+    email           = req.POST.get('email','')
+    password        = req.POST.get('password','')
     userv           = False
     user            = False
-    if r.GET.get('out',''):
-            logout(r)
-            return redirect('register')
-
+    if req.GET.get('out', ''):
+       logout(req)
+       return redirect('register')
+    
     if email.__contains__("@"):
         try:
             user        = User.objects.get(email=email)
@@ -81,13 +83,13 @@ def logn(r):
         except:
             pass
     else:
-            user            = authenticate(username=email,password=password)
+        user            = authenticate(username = email,password=password)
     if user or userv:
-        login(r,user)
-        books            = Book.objects.all().order_by('pk')[:6]
-        return render(r,'data/books.html',{'buks':books,'current_user':user})
+        login(req, user)
+        books           = Book.objects.all().order_by('pk')[:6]
+        return render(req, 'data/books.html', {'buks':books,'current_user':user})
 
-    return render(r,'data/people.html',{'login':True,'error':True,'u':email})
+    return render(req,'data/people.html', {'login':True, 'error':True, 'u':email})
 
 
 class UserViewset(viewsets.ModelViewSet):
@@ -100,31 +102,25 @@ class GroupViewset(viewsets.ModelViewSet):
     queryset        = Group.objects.all()
     serializer_class= GroupSerializer
 
-def load_user(clas,email):
+def load_user(class_name, email):
     try:
-        user            = clas.objects.get(email=email)
+        user            = class_name.objects.get(email = email)
         return user
     except Exception as e:
         return False
 
-#----------------------- Search Engine -----------------------------------------
 
-
-
-#---------------------Returning available books------------------
 def index(request):
+    """ Returning available books from home"""
     books            = Book.objects.all().order_by('pk')[:6]
-    return render(request,'data/books.html',{'buks':books,'current_user':request.user})
-
-
-#--------------------Registration--------------------------------
+    return render(request, 'data/books.html', {'buks':books, 'current_user':request.user})
 
 def register(request):
-    if request.method=='GET':
+    """ Register users """
+    if request.method == 'GET':
         if request.GET.get('login',''):
-            return render(request,'data/people.html',{'login':False})
-
-        return render(request,'data/people.html',{'login':True})
+            return render(request, 'data/people.html', {'login':False})
+        return render(request, 'data/people.html', {'login':True})
     if request.GET.get('register',''):
         return logn(request)
     try:
@@ -140,7 +136,7 @@ def register(request):
     except Exception as e:
         return HttpResponse("<h2>Hello %s, please fill your form correctly............"%request.POST.get('fname',''))
 
-    if load_user(User,email):
+    if load_user(User, email):
         return HttpResponse("<h2>You are already registered, please <a href='/login'>login</a></h2>")
     else:
         logging_user    = User(username=username,first_name=fname,last_name=lname,email=email,password=password)
@@ -166,10 +162,9 @@ def register(request):
     return redirect('/')
 
 
-
-
 def category(request):
-    if request.method=='GET':
+    """ Get books in accordance to the category """
+    if request.method == 'GET':
         if not request.user.is_authenticated:
             return redirect('/login')
         cat     = request.GET.get('cat','')
@@ -181,7 +176,7 @@ def category(request):
     return HttpResponse("Method not allowed")
 
 def book(request):
-
+    """ Get all available books according to the search"""
     buks        = Book.objects.all()[:5]
     people      = Users.objects.all()
     user        = request.user
@@ -198,8 +193,6 @@ def book(request):
                 return render(request,'data/%s.html'%cat,{'buks':buks,'current_user':user})
             except:
                 return render(request,'data/books.html',{'buks':buks,'current_user':user})
-
-
         elif request.GET.get('borrowed',''):
             try:
                 return render(request,'data/borrowed.html',{'buks':buks,'current_user':user})
@@ -219,34 +212,26 @@ def book(request):
     date        = request.POST.get('date','')
     category    = request.POST.get('category','')
 
-
     if image:
         #if request.user.is_superuser:
             path    = os.path.join(settings.MEDIA_ROOT,image.name)
-            #image   = req.urlretrieve(url,path)
-            savedto = default_storage.save(path,image)
+            #image  = req.urlretrieve(url, path)
+            savedto = default_storage.save(path, image)
         # else:
-        #     image   = req.urlretrieve('http://coders.pythonanywhere.com/media/net.jpg',image.name)
+        #     image = req.urlretrieve('http://coders.pythonanywhere.com/media/net.jpg',image.name)
 
-    #book        = Books(book_title=title,auther=auther,book_image=path)
-    documents   = ['pdf','docx']
-    file_type=image.name.split('.')[-1]
+    #book           = Books(book_title=title,auther=auther,book_image=path)
+    documents       = ['pdf','docx']
+    file_type       = image.name.split('.')[-1]
     #if file_type in documents:
-    #    book        = Book(book_title=title,auther=auther,book_image='https://amix.pythonanywhere.com/static/icon.jpg' ,date_published=date,category=category)
+    #    book       = Book(book_title=title,auther=auther,book_image='https://amix.pythonanywhere.com/static/icon.jpg' ,date_published=date,category=category)
     #else:
-    book        = Book(book_title=title,auther=auther,book_image=image.name,date_published=date,category=category)
+    book            = Book(book_title=title,auther=auther,book_image=image.name,date_published=date,category=category)
     book.save()
     try:
         return render(request,'data/books.html',{'book':True,'current_user':user,'buks':buks})
     except Exception as e:
         return render(request,'uploads/librarian.html',{'error':True})
-
-
-
-
-
-#----------------------------Viewing Available People----------------------
-#--------------------------------------------------------------------------
 
 def delete(request):
     """ 
@@ -267,7 +252,7 @@ def delete(request):
 
 #----------------------------payments---------------------------------------#
 def pay(request):
-    return render(request,'data/payments.html',{'key':settings.STRIPE_PUBLISHABLE_KEY})
+    return render(request, 'data/payments.html', {'key':settings.STRIPE_PUBLISHABLE_KEY})
 
 def charge(request):
     """ Manage Payments, uing stripe """
