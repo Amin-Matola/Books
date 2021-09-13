@@ -24,7 +24,7 @@ def about(request):
     return render(request,'data/about.html',{})
 
 def contact(request):
-    if request.method=='GET':
+    if request.method == 'GET':
         return render(request,"data/contact.html",{})
 
     sender      = request.POST.get('email','')
@@ -40,21 +40,23 @@ def contact(request):
         return render(request,"data/contact.html",{'success':True})
     return render(request,"data/contact.html",{})
 
-#-------------------------Applications-------------------------------
+#-------------------------
+# Applications
+#-------------------------------
 
 def application(request):
     if request.method=='GET':
         return render(request,'data/application.html',{})
-    to      = request.POST.get('to','')
-    subject = request.POST.get('subject','')
-    typ     = request.POST.get('type','')
+    to      = request.POST.get('to', '')
+    subject = request.POST.get('subject', '')
+    typ     = request.POST.get('type', '')
 
     rq      = rt.post('https://script.google.com/macros/s/AKfycbxSGD8JSEbvymnhDXq4g1qiUBjAudPxXcY5-cSB_PB-dXPA0asc/exec',
-    data={'email':to,'type':typ,'title':subject})
-    if rq.status_code==200:
+    data    = {'email':to,'type':typ, 'title':subject})
+    if rq.status_code == 200:
         #return HttpResponse(subject)
-        return render(request,'data/application.html',{'success':True})
-    return render(request,'data/application.html',{})
+        return render(request,'data/application.html', {'success':True})
+    return render(request, 'data/application.html', {})
 
 #-------------------The usage conditions---------------------------
 def conditions(request):
@@ -246,58 +248,48 @@ def book(request):
 #----------------------------Viewing Available People----------------------
 #--------------------------------------------------------------------------
 
-
-
 def delete(request):
-    b_id=request.GET.get('book','')
-    #return HttpResponse(str(request.GET.get('book','')))
-    #b_id = 1
+    """ 
+        Delete book from the frontend, 
+        only admin can see this button 
+    """
+    b_id    = request.GET.get('book','')
+    
     if b_id and request.user.is_superuser:
-        bookToDelete    = Book.objects.get(id=int(b_id))
-        #buks        = books.query.all()
+        bookToDelete    = Book.objects.get( id = int(b_id) )
 
         try:
             bookToDelete.delete()
             return redirect('/data')
         except Exception as e:
             return HttpResponse("<h1>Oops! Oops! That is an error:</h1><hr>%s"%e)
-
-
-
-
-
     return HttpResponse("<h1>No book selected</h1>")
 
 #----------------------------payments---------------------------------------#
 def pay(request):
     return render(request,'data/payments.html',{'key':settings.STRIPE_PUBLISHABLE_KEY})
 
-
-
-def charge(request): # new
+def charge(request):
+    """ Manage Payments, uing stripe """
     if request.method == 'POST':
-        #return HttpResponse(request.POST['stripeToken'])
         stripe.api_key  = settings.STRIPE_SECRET_KEY
-        charge = stripe.Charge.create(
-            amount=500,
-            currency='usd',
-            description='A Django charge',
-            source=request.POST['stripeToken'])
-        fuser    = User.objects.get(pk=request.user.pk)
-        user    = Users.objects.get(user=fuser)
-        user.paid=True
+        charge          = stripe.Charge.create(
+                            amount=500,
+                            currency='usd',
+                            description='A Django charge',
+                            source=request.POST['stripeToken']
+                        )
+        fuser           = User.objects.get(pk=request.user.pk)
+        user            = Users.objects.get(user=fuser)
+        user.paid       = True
         user.save()
-        errortype='Hello %s, Thanks for upgrading... Now you are our member. you can get books as much as you want!'%fuser.username
-        return render(request,'data/books.html',{'buks':Book.objects.all()[:5],'errortype':errortype})
-
-
+        errortype       = 'Hello %s, Thanks for upgrading... Now you are our member. you can get books as much as you want!'%fuser.username
+        return render( request,'data/books.html', {'buks':Book.objects.all()[:5], 'errortype':errortype})
     else:
-        return render(request,'data/payments.html',{})
+        return render(request, 'data/payments.html',{})
 
 def search(request):
-
-
-    if request.method=='GET':
+    if request.method == 'GET':
         user        = request.user
         data        = request.GET.get('q','')
         try:
@@ -305,11 +297,10 @@ def search(request):
             book    = Book.objects.filter(book_title__contains=data.title()).all()
         except Exception as e:
             return HttpResponse("That was an error :<hr>!%s"%e)
-
     return render(request,'data/books.html',{'search':book,'current_user':user,'total':len(book)})
 
 def download(request):
-    if request.method=='GET':
+    if request.method == 'GET':
         if not request.user.is_authenticated:
             return redirect('register')
         ruser  = User.objects.get(pk=request.user.pk)
@@ -317,7 +308,7 @@ def download(request):
         if not user.paid:
             if user.downloads>=5:
 
-                return render(request,'data/books.html',{'buks':Book.objects.all()[:5],'etype':True})
+                return render(request,'data/books.html', {'buks':Book.objects.all()[:5], 'etype':True})
 
         f               = request.GET.get('img','')
 
@@ -325,29 +316,30 @@ def download(request):
         f_file          = book.book_image.url
         book.downloads += 1
         book.save()
-        file            = open(settings.MEDIA_ROOT+"/"+f_file.split('/')[-1],'rb')
+        file            = open(settings.MEDIA_ROOT+"/"+f_file.split('/')[-1], 'rb')
         #wrapper        = FileWrapper(file(file))
-        response        = HttpResponse(file.read(),content_type="application/pdf") #mimetypes.guess_type(file)[0])
-        #response['Content-Length']=os.path.getsize(file)
-        response['Content-Disposition']='attachment; filename=%s'%f_file.split('/')[-1]
-        user.downloads+=1
+        response        = HttpResponse(file.read(), content_type="application/pdf") #mimetypes.guess_type(file)[0])
+        #response['Content-Length'] = os.path.getsize(file)
+        response['Content-Disposition'] ='attachment; filename=%s'%f_file.split('/')[-1]
+        user.downloads  +=1
         user.save()
         return response
 
 def test(request):
-    if request.method=='GET':
+    if request.method == 'GET':
         return render(request,'data/test.html')
 
 
 def upload(request):
-    if request.method=='GET':
+    """ Used to store any file to server when not logged to the dashboard """
+    if request.method == 'GET':
         return render(request,'data/file.html',{})
     im      = request.FILES['doc']
-    #return str(type(im))
+   
     if im:
         #if request.user.is_superuser:
             path    = os.path.join(settings.MEDIA_ROOT,im.name)
-            #image   = req.urlretrieve(url,path)
+            #image  = req.urlretrieve(url,path)
             savedto = default_storage.save(path,im)
             return HttpResponse("Done")
     return HttpResponse("Error")
