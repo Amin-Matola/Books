@@ -1,0 +1,60 @@
+{% extends 'data/base.html' %}
+{% block content %}
+<div class='row col-sm-2 mr-auto inner-wrapper' style='margin-top:25px;height:100%'>
+
+    <div class='col-sm-12 sidebar' id='red' style='padding-top:50px'>
+        <ul class='sidenav col-sm-12' id='slide-out'>
+            <li><a href='/data/book?cat=music&sub=piano'>Piano</a></li>
+            <li><a href='/data/book?cat=music&sub=guitar'>Guiters</a></li>
+            <li><a href='/data/book?cat=music&sub=banjo'>Banjo</a></li>
+            <li><a href='/data/book?cat=music&sub=keyboard'>Keyboard</a></li>
+        </ul>
+    </div>
+</div>
+
+<!-----------------------------Second right div--------------------------------------------------->
+<div class='row col-sm-10 ml-auto' id='main' style='margin-top:-866px;height:100%'>
+    <table class='table col col-sm-12'>
+        <tr class='active btn-info'>
+            <th>
+                <h2>Available music books</h2>
+            </th>
+            <th></th>
+            <th></th>
+        </tr>
+        {% if buks %}
+        {% for buk in buks %}
+
+        <tr>
+            <td class='col-sm-5'>
+                <img style='width:30px;height:30px' src="http://amix.pythonanywhere.com/static/pd.jpg"/>
+                &nbsp; &nbsp; &nbsp;
+                <span style='font-size:1.5em'>{{ buk.book_title }}</span>
+                &nbsp; &nbsp;by&nbsp; &nbsp; <span style='color:red;font-size:1.5em;'>{{buk.auther }}</span>
+            </td>
+            <td class='col-sm-3'>{{ buk.date_published }}</td>
+            {% if current_user %}
+            {% if current_user.is_superuser %}
+            <td class='col-sm-2'>
+                <a href='/data/delete?book={{buk.id}}' class='control btn peach-gradient btn-rounded btn-sm my-0'>
+                    <span class="fa fa-trash" aria-hidden="true"></span>
+                    &nbsp;Delete
+                </a>
+            </td>
+            {% else %}
+            <td class='col-sm-2'>
+                <a href='/data/download?img={{buk.id}}' class=' btn peach-gradient btn-rounded btn-sm my-0'>
+                    <span id='download' class="fa fa-download" aria-hidden="true"></span>
+                    &nbsp;Download
+                </a>
+            </td>
+            {% endif %}
+            {% endif %}
+         </tr>
+
+        {% endfor %}
+        {% endif %}
+    </table>
+</div>
+
+{% endblock %}
