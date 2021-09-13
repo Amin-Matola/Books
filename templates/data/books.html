@@ -1,0 +1,190 @@
+{% extends 'data/base.html'%}
+{% block content %}
+<div class='row inner-wrapper'>
+    {% if etype %}
+        <h3 class='alert alert-danger col-sm-12'>
+            You have exceeded free account download limit (5 books), please upgrade to <a href="pay">paid account</a>!
+        </h3>
+    {% elif errortype %}
+        <h3 class='alert alert-success col-sm-12'>
+            {{ errortype }}
+        </h3>
+    {% endif %}
+    <div class='col-sm-3' id='red'>
+         <form class='mr-auto card md-form active-pink active-pink-2 col-sm-12' action='/data/book' method='post' enctype='multipart/form-data' id='book-form'>
+            {% csrf_token %}
+            <div class='form-group'>
+                <lable for='title'>Book Title</lable><input type='text' name='title' class='form-control'>
+                </div>
+                <div class='form-group'>
+                    <lable for='category'>Category</lable>
+                    <select class='mdb-select md-form colorful-select dropdown-success form-control' name='category'>
+                        <option value='academic'>Academic</option>
+                        <option value='agriculture'>Agriculture</option>
+                        <option value='business'>Business</option>
+                        <option value='computer'>Computers</option>
+                        <option value='data'>Data</option>
+                        <option value='fictions'>Fictions</option>
+                        <option value='geography'>Geography</option>
+                        <option value='healt'>Health</option>
+                        <option value='inventions'>Inventions</option>
+                        <option value='music'>Music</option>
+                        <option value='management'>Management</option>
+                        <option value='programming'>Programming</option>
+                        <option value='social'>Social Sciences</option>
+                    </select>
+                </div>
+                <div class='form-group'>
+                    <lable for='author'>Author</lable>
+                    <input type='text' name='auther' class='form-control'>
+                </div>
+                <div class='form-group'>
+                    <lable for='date'>Date Published</lable>
+                    <input type='date' name='date' class='form-control'>
+                </div>
+                <div class='form-group'>
+                    <lable for='image'>Book</lable><input type='file' name='image' class='form-control' style='border:0px;' placeholder='upload book'>
+                </div>
+                {% if user %}
+                {% if user.is_superuser %}
+                    <button class='btn blue-gradient btn-rounded my-0'>
+                        <span class='fa fa-plus' aria-hidden='true' style='font-size:1.5em;color:orange'></span>
+                        &nbsp;Add Book
+                    </button>
+                {% else %}
+                    <button class='btn blue-gradient btn-rounded my-0'>
+                        <span class='fa fa-plus' aria-hidden='true' style='font-size:1.5em;color:orange'></span>
+                        &nbsp;Register Book
+                    </button>
+                {% endif %}
+                {% endif %}
+
+         </form>
+    <div>
+    <div class='col-sm-12 sidebar' style='height:42%;box-shadow:5px 5px 5px grey;color:red'>
+        <h2>Sub Categories</h2>
+        <ul class='sidenav' style='color:red'>
+            <li><a href='/data/book?cat=agriculture'>Agriculture</a></li>
+            <li><a href='/data/book?cat=language'>Entrepreneurship</a></li>
+
+            <li><a href='/data/book?cat=language'>Languages</a></li>
+            <li><a href='/data/book?cat=management'>Management</a></li>
+            <li><a href='/data/book?cat=rhetoric'>Rhetorics</a></li>
+            <li><a href='/data/book?cat=leadership'>Leadership</a></li>
+            <hr>
+            <br>
+            <li><a href='about' style='color:orange;background:black'>
+                <i class='fa fa-users' style='color:blue'></i> About Us</a>
+            </li>
+        </ul>
+    </div>
+</div>
+</div>
+
+<div class='col-sm-9 ml-auto' id='main'>
+    <!------- Iterate All Books ------------>
+    <table class='table col-sm-12'>
+        {% if book %}
+            <tr class='active alert alert-success'>
+                <th><h2 class=''>Book added successfully!</h2></th>
+                <th></th>
+            </tr>
+        {% elif book_deleted %}
+            <tr class='active alert alert-success'>
+                <h2>Book deleted successfully!</h2>
+            </tr>
+        {% else %}
+            <tr class='active btn-info'>
+                <th><h2>Available books...</h2></th><th></th><th></th>
+            </tr>
+        {% endif %}
+
+        {% if buks %}
+        {% for buk in buks %}
+
+        <tr>
+
+            <td class='col-sm-5'>
+                <img style='width:45px;height:45px' src="https://amix.pythonanywhere.com/static/pdf.jpg"/>
+                    &nbsp; &nbsp; &nbsp;
+                   <span>{{ buk.book_title }}</span>
+                   &nbsp; &nbsp;by&nbsp; &nbsp;
+                   <span style='color:red;'>{{buk.auther }}</span>
+            </td>
+            <td class='col-sm-5'>{{ buk.date_published }}</td>
+            {% if current_user %}
+            {% if current_user.is_superuser %}
+            <td class='col-sm-2'>
+                <a href='/data/delete?book={{buk.id}}' class='control btn peach-gradient btn-rounded btn-sm my-0'>
+                    <span class="fa fa-trash" aria-hidden="true"></span>
+                    &nbsp;Delete
+                </a>
+            </td>
+            {% else %}
+            <td class='col-sm-4'>
+                <a href='/data/download?img={{buk.id}}' class=' btn peach-gradient btn-rounded btn-sm my-0'>
+                    <span id='download' class="fa fa-download" aria-hidden="true"></span>
+                    &nbsp;Download
+                </a>
+            </td>
+            {% endif %}
+            {% endif %}
+
+        </tr>
+
+        {% endfor %}
+        {% endif %}
+
+        <!--search results---------->
+        {% if search %}
+        <h2 class='col-sm-12 alert-success alert'>Search results ({{total}})</h2>
+
+        {% for buk in search %}
+        {% if current_user.is_superuser %}
+
+
+        <tr>
+
+           <td class='col-sm-8'>
+               <img style='width:30px;height:30px' src="https://amix.pythonanywhere.com/static/icon.jpg"/>
+               &nbsp; &nbsp; &nbsp;
+               <span style='font-size:1.5em'>{{ buk.book_title }}</span>
+                &nbsp; &nbsp;by&nbsp; &nbsp;
+               <span style='color:red;font-size:1.5em;'>{{buk.auther }}</span>
+           </td>
+           <td class='col-sm-4'>
+                <a href='/data/delete?book={{buk.id}}' class='btn peach-gradient btn-rounded btn-sm my-0'>
+                    <span class="fa fa-trash" aria-hidden="true"></span>
+                    &nbsp;Delete
+                </a>
+            </td>
+
+        </tr>
+        {% else %}
+
+        <tr>
+
+           <td class='col-sm-8'>
+                <img style='width:30px;height:30px' src="https://amix.pythonanywhere.com/static/pdf.jpg"/>
+                &nbsp; &nbsp; &nbsp;
+                <span style='font-size:1.5em'>{{ buk.book_title }}</span>
+                &nbsp; &nbsp;by&nbsp; &nbsp;
+                <span style='color:red;font-size:1.5em;'>{{buk.auther }}</span>
+            </td>
+            <td class='col-sm-4'>
+                <a href='/data/download?img={{buk.id}}' class=' btn peach-gradient btn-rounded btn-sm my-0'>
+                    <span id='download' class="fa fa-download" aria-hidden="true"></span>
+                    &nbsp;Download
+                </a>
+            </td>
+
+        </tr>
+        {% endif %}
+        {% endfor %}
+        {% endif %}
+    </table>
+
+</div>
+</div>
+
+{% endblock %}
