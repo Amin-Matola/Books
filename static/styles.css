@@ -1,0 +1,120 @@
+.sidebar {
+    box-shadow: 5px 5px 5px grey; 
+    background:#c0c0b0; 
+}
+.sidenav li a { 
+    color:red; 
+    margin-bottom:30px; 
+    text-decoration:none; font-size:1.3em; 
+    text-align:left;
+}
+.sidenav li {
+    list-style-type:none;
+    text-align:left;
+}
+.sidenav {
+    text-align:left;
+}
+body {
+    margin:0px;
+    border:0px;
+    padding:0px;
+}
+#book-form {
+    height:100%;
+    box-shadow:5px 0px 0px #b0b0b0;
+    height:500px;
+}
+form {
+    color:blue;
+    margin-top:-6px;
+}
+input {
+    border-bottom:1px solid orange;
+}
+#main {
+    background:#ffffff;
+    border-top:1px solid red;
+    border-left:0px solid red;
+    height:100%;
+    color:orange;
+    margin-top:20px;
+}
+table {
+    width:100%;
+    padding-left:0px;
+    margin-left:0px;
+}
+td {
+    font-size:1.5em;
+    color:blue;margin-bottom:20px;
+}
+table tr {
+    margin-bottom:30px;
+}
+#main-left {
+    background:#fefefe;
+    height:99%;color:red;
+    margin-top:20px;
+    box-shadow:5px 5px 5px grey;
+}
+#red {
+    color:white;
+}
+.container-fluid {
+    background: #cdcdcd;
+}
+.people {
+    margin-top:-100px;
+    
+}
+.fa {
+    color:orange;
+    font-size:1.4em;
+    
+}
+#download {
+    color:blue;
+    font-size:2em;
+    
+}
+h2 {
+    color:blue;
+    
+}
+ul li:hover {
+    color:white;
+    background:black;
+    
+}
+ul li a:hover {
+    color:white;
+    
+}
+span {
+    font-size:1.5em;
+    
+}
+
+@media only screen and (max-width:600px){
+    table { 
+        font-size:1em;
+        
+    }
+    .fa { 
+        font-size:1em; 
+        
+    }
+    table tr td { 
+        font-size:1em;
+    
+    }
+    #download{ 
+        font-size:1em;
+        
+    }
+    span{ 
+        font-size:1em;
+        
+    }
+}
