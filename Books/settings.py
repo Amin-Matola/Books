@@ -42,7 +42,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'Web.urls'
+ROOT_URLCONF = 'Books.urls'
 
 TEMPLATES = [
     {
@@ -60,7 +60,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'Web.wsgi.application'
+WSGI_APPLICATION = 'Books.wsgi.application'
 
 
 # Database
@@ -69,10 +69,10 @@ WSGI_APPLICATION = 'Web.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'coders$books',
+        'NAME': 'books',
         'USER':'coders',
-        'PASSWORD':'///amin-d',
-        'HOST':'coders.mysql.pythonanywhere-services.com',
+        'PASSWORD':'mypass',
+        'HOST':'dbnamehere',
         'PORT':'',
     }
 }
