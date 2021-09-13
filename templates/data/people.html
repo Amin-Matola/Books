@@ -1,0 +1,100 @@
+{% extends 'data/base.html' %}
+
+{% block content %}
+<div class='row'>
+
+    {% if people %}
+    <ol class='list-group'>
+        <li class='list-group-item'><h1 style='color:red'>The available people...</h1></li>
+        {% for person in people %}
+        <li class='list-group-item'>{{person.fname}} {{ person.lname }} </li>
+        {% endfor %}
+    </ol>
+    {% else %}
+    {% if error %}
+        <h2 class='alert alert-danger text-center' style='margin: 40px auto;width:90%;'>
+            Your username or password is incorrect, please try again!
+        </h2>
+    {% else %}
+        <h2 class='text-dark text-center' style='margin:40px auto;width:90%;text-align:center'>
+            Login or Sign Up to have released privileges!
+        </h2>
+    {% endif %}
+    {% if login %}
+
+    <div class='col-sm-12'>
+        <form action='login?register=0' method='post' class='card col-sm-6 col-lg-4 mx-auto'style='box-shadow:5px 5px 5px grey;padding:10px;margin-top:50px;'>
+            {% csrf_token %}
+            <legend class='bg-info text-white'>Membership Log In</legend>
+            <div class='form-group'>
+                    <label for='email'>Email or Username</label>
+                {% if u %}
+                    <input type='text'name='email'  class='form-control' value={{u}}/>
+                {% else %}
+                    <input type='text'name='email' class='form-control'/>
+                {% endif %}
+            </div>
+            <div class='form-group'>
+                <label for='password'>Password</label>
+                <input type='password' name='password' class='form-control'>
+            </div>
+            <div class='form-group'>
+                <button class='btn btn-success'>Log In</button>
+            </div>
+        </form>
+    </div>
+    <div class='col-sm-12 text-center' style='font-size:1.5em;margin-top:50px'>
+        Dont have an account yet? <a href='/data/login?login=0'>sign up</a>
+    </div>
+    {% else %}
+
+    <form action='login' method='post' class='card col-sm-6 col-lg-4 mx-auto' style='box-shadow:5px 5px 5px grey;margin-left:30%;padding:10px;'>
+        {% csrf_token %}
+        <legend class='bg-info text-white'>REGISTRATION FORM</legend>
+        <div class='form-group'>
+            <label for='username'>User Name</label>
+            <input type='text' name='username' class='form-control' placeholder='This is the name used for login.' required/>
+        </div>
+        <div class='form-group'>
+            <lable for='fname'>First Name</lable>
+            <input type='text' name='fname' class='form-control' required/>
+        </div>
+        <div class='form-group'>
+            <label for='lname'>Last Name</label>
+            <input type='text' name='lname' class='form-control'/>
+        </div>
+        <div class='form-group'>
+            <label for='mobile'>Mobile</label>
+            <input type='tel' name='mobile' class='form-control'/>
+        </div>
+        <div class='form-group'>
+            <label for='email'>Email</label>
+            <input type='email'name='email' class='form-control' required/>
+        </div>
+        <div class='form-group'>
+
+            <label for='gender'><span style='color:orange'>Gender</span><br>
+            <input type='checkbox' name='gender' style='margin-left:10px;'>
+            Male</label>
+        </div>
+        <div class='form-group'>
+            <label for='address'>Address</label>
+            <textarea class='form-control' name='address'></textarea>
+        </div>
+        <div class='form-group'>
+            <label for='password'>Password</label>
+            <input type='password' name='password' class='form-control' required/>
+        </div>
+        <div class='form-group'>
+            <button class='btn btn-success'>Register</button>
+        </div>
+
+
+
+
+    </form>
+    {% endif %}
+    {% endif %}
+
+</div>
+{% endblock %}
