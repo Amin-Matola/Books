@@ -1,0 +1,15 @@
+{% extends 'data/base.html' %}
+{% block content %}
+
+<form class='mr-auto card md-form active-pink active-pink-2 col-sm-12' action='upload' method='post' enctype='multipart/form-data' id='book-form'>
+    {% csrf_token %}
+    <div class='form-group'>
+        <lable for='image'>Book</lable>
+        <input type='file' name='doc' class='form-control' style='border:0px;' placeholder='upload book'>
+    </div>
+    <div class='form-group'>
+        <button type='submit' class='btn btn-success'>Upload</button>
+    </div>
+</form>
+
+{% endblock %}
