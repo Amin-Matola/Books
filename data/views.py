@@ -15,6 +15,17 @@ from urllib import request as req
 import requests as rt
 from datetime import datetime
 
+class UserViewset(viewsets.ModelViewSet):
+    """An API for editing Users"""
+    queryset        = User.objects.all().order_by('-date_joined')
+    serializer_class   = UserSerializer
+
+class GroupViewset(viewsets.ModelViewSet):
+    """An API for editing groups """
+    queryset        = Group.objects.all()
+    serializer_class= GroupSerializer
+
+
 """
 ............... Adding Views ...................
 
@@ -71,7 +82,6 @@ def conditions(request):
     return render(request,'data/conditions.html',{})
 
 
-
 def logn(req):
     """ Login and authenticate users """
     email           = req.POST.get('email','')
@@ -97,16 +107,6 @@ def logn(req):
 
     return render(req,'data/people.html', {'login':True, 'error':True, 'u':email})
 
-
-class UserViewset(viewsets.ModelViewSet):
-    """An API for editing Users"""
-    queryset        = User.objects.all().order_by('-date_joined')
-    serializer_class   = UserSerializer
-
-class GroupViewset(viewsets.ModelViewSet):
-    """An API for editing groups """
-    queryset        = Group.objects.all()
-    serializer_class= GroupSerializer
 
 def load_user(class_name, email):
     try:
