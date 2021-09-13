@@ -1,1 +1,20 @@
 
+{% extends 'data/base.html' %}
+    {% block content %}
+    <div class='container-fluid' style='height:100%;border-top:1px solid purple' id='main'>
+    
+        <h1 class='col-sm-11 bg-primary text-white' style='margin-top:100px;text-align:center;margin-bottom:50px'>PAGE NOT FOUND!!!</h1>
+        <div class='col-sm-9' style='margin-left:10%;'>
+            <p style='font-size:2em;'>
+                <span style='color:red'>Oops! Oops!</span> That was an error an unusuall error here,<br>
+                The url <a href='{{ url }}'>https://coders.pythonanywhere.com{{url}}</a> is not registered on our site,please visit <a href='/'>Home</a> page
+                to get started.<br>
+                <br>
+                We kindly regret for the inconvenience!<br>
+                
+                <br>
+                <a href='/'>The O-SHOP Team</a>
+            </p>
+        </div>
+    </div>
+    {% endblock %}
